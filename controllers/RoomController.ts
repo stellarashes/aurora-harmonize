@@ -16,9 +16,6 @@ export class RoomController {
 	@POST
 	public async createRoom(body: any) {
 		this.roomService = await this.provider.createOrFindRoom();
-		if (body && body.user) {
-			await this.roomService.joinRoom(body.user);
-		}
 		return this.roomService.getRoomInfo();
 	}
 

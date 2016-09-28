@@ -5,30 +5,29 @@ import {Room} from "../../models/Room";
 
 @Singleton
 export class RoomServiceProvider {
+	private allRooms: Map<string, RoomService>;
 	private socket: SocketService;
 	public setSocket(socket: SocketService) {
 		this.socket = socket;
 	}
 
-	public async createOrFindRoom(roomId?: string): Promise<RoomService> {
-		let room = null;
-		if (roomId) {
-			room = await this.findRoom(roomId);
-		}
-
-		if (room === null) {
-			room = await Room.create();
+	public async createOrFindRoom(roomNumber?: string): Promise<RoomService> {
+		if (roomNumber) {
+			if (this.allRooms.has(roomNumber))
+				return this.allRooms.get(roomNumber);
 		}
 
 		let roomService = Container.get(RoomService);
-		roomService.initialize(room, this.socket);
+		let room;
+		while (!room || this.allRooms.has(room.roomNumber)) {
+			room = new Room();
+		}
+		await roomService.initialize(room, this.socket);
+		this.allRooms.set(room.roomNumber, roomService);
 		return roomService;
 	}
 
 	public async findRoom(roomId: string) {
-		let room = await Room.findById(roomId);
-		let roomService = Container.get(RoomService);
-		roomService.initialize(room, this.socket);
-		return roomService;
+		return this.allRooms.get(roomId);
 	}
 }

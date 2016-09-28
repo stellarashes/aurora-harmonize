@@ -7,7 +7,9 @@
     "express": "registry:dt/express#4.0.0+20160708185218",
     "express-serve-static-core": "registry:dt/express-serve-static-core#4.0.0+20160923124352",
     "node": "registry:dt/node#6.0.0+20160925070332",
+    "request-promise": "registry:dt/request-promise#3.0.0+20160906190103",
     "serve-static": "registry:dt/serve-static#0.0.0+20160606155157",
-    "socket.io": "registry:dt/socket.io#1.4.4+20160909205835"
+    "socket.io": "registry:dt/socket.io#1.4.4+20160909205835",
+    "xml2js": "registry:dt/xml2js#0.0.0+20160317120654"
   }
 }

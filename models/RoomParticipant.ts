@@ -3,4 +3,11 @@ import {Table, Column, DataModel} from "ts-chassis";
 export class RoomParticipant extends DataModel {
 	@Column()
 	name: string;
+
+	@Column()
+	role: string;
+
+	currentVote: string;
+	socketSessionId: string;
+
 }
