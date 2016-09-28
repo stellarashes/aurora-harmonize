@@ -1,0 +1,24 @@
+{
+  "name": "aurora-harmonize",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stellarashes/aurora-harmonize.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stellarashes/aurora-harmonize/issues"
+  },
+  "homepage": "https://github.com/stellarashes/aurora-harmonize#readme",
+  "dependencies": {
+    "socket.io": "^1.4.8",
+    "ts-chassis": "git+ssh://git@bitbucket.org/stellarashes/ts-chassis.git",
+    "typescript-ioc": "^0.2.4"
+  }
+}
