@@ -13,11 +13,12 @@ import {NameService} from "../name.service";
 })
 export class ViewRoomComponent implements OnInit {
 	private roomNumber;
-	private roomInfo = {cards: [], participants: []};
+	private roomInfo = {cards: [], participants: [], currentCard: null};
 	private isAdmin = false;
 	private estimateOptions = [0, 1, 2, 3, 5, 8].map(x => {
 		return {display: x, value: x};
 	});
+	private finalValue: number;
 
 	constructor(private route: ActivatedRoute,
 	            private roomService: RoomService,
@@ -67,12 +68,28 @@ export class ViewRoomComponent implements OnInit {
 							}
 							case 'vote': {
 								let target = this.roomInfo.participants.filter(x => x.id === data.item.participant.id);
-								console.log(this.roomInfo.participants);
 								if (target.length > 0) {
 									let participant = target[0];
 									participant.currentVote = data.item.participant.currentVote;
 									participant.currentVoteTime = data.item.participant.currentVoteTime;
+
+									if (this.isAdmin) {
+										let maxVal = 0;
+										this.roomInfo.participants.forEach(x => {if (x.currentVote && x.currentVote > maxVal) maxVal = x.currentVote});
+										this.finalValue = maxVal;
+									}
 								}
+								break;
+							}
+							case 'setCard': {
+								this.roomInfo.currentCard = data.item;
+								break;
+							}
+							case 'resetVotes': {
+								this.roomInfo.participants.forEach(x => {
+									x.currentVote = null;
+									x.currentVoteTime = null;
+								});
 								break;
 							}
 						}
@@ -90,6 +107,38 @@ export class ViewRoomComponent implements OnInit {
 
 	vote(value) {
 		this.socketService.emit('vote', {value: value});
+	}
+
+	setCard(card) {
+		if (this.isAdmin && card.number != this.roomInfo.currentCard) {
+			this.socketService.emit('setCard', card.number);
+			this.resetVotes();
+		}
+	}
+
+	resetVotes() {
+		if (this.isAdmin) {
+			this.socketService.emit('resetVotes');
+		}
+	}
+
+	getCurrentCard() {
+		if (this.roomInfo.currentCard) {
+			let targetCards = this.roomInfo.cards.filter(x => x.number == this.roomInfo.currentCard);
+			if (targetCards.length > 0) {
+				return targetCards[0];
+			}
+		}
+
+		return {};
+	}
+
+	finalizeVote() {
+		console.log(this.finalValue);
+		if (this.isAdmin && typeof(this.finalValue) !== 'undefined') {
+			this.roomService.finalizeValue(this.roomNumber, this.finalValue)
+				.subscribe(x => console.log(x.json()));
+		}
 	}
 
 }

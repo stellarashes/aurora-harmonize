@@ -8,11 +8,13 @@ export class RoomService {
 	private io;
 	private namespace: string;
 	private room: Room;
+	private mingleService: MingleService;
 
 	public async initialize(room: Room, socket: SocketService) {
 		this.room = room;
 		this.namespace = '/' + room.roomNumber;
 		this.io = socket.createNamespace(this.namespace);
+		this.mingleService = Container.get(MingleService);
 		return Promise.all([
 			this.setupIO(),
 			this.getCards(),
@@ -49,8 +51,7 @@ export class RoomService {
 	}
 
 	private async getCards() {
-		let service = Container.get(MingleService);
-		this.room.cards = await service.getCards(this.room.mingleProject);
+		this.room.cards = await this.mingleService.getCards(this.room.mingleProject);
 		return this.room.cards;
 	}
 
@@ -81,10 +82,30 @@ export class RoomService {
 						});
 					});
 			});
+			socket.on('setCard', number => {
+				this.room.currentCard = number;
+				this.broadcastToRoom('setCard', this.room.currentCard);
+			});
+			socket.on('resetVotes', () => {
+				this.room.participants.forEach(x => {
+					x.currentVote = null;
+					x.currentVoteTime = null;
+				});
+				this.broadcastToRoom('resetVotes');
+			});
 		});
 	}
 
 	public broadcastToRoom(msg: string, param?: any) {
 		this.io.to(this.namespace).emit(msg, param);
+	}
+
+	public async setFinalValue(value: number) {
+		if (this.room.currentCard) {
+			await this.mingleService.setEstimate(this.room.mingleProject, this.room.currentCard, value);
+			return {
+				status: 'success'
+			};
+		}
 	}
 }

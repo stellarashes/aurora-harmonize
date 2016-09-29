@@ -26,9 +26,10 @@ export class MingleService {
 		});
 	}
 
-	public async setEstimate(card: Card, estimate: number): Promise<Card> {
+	public async setEstimate(project: string, cardNumber: number, estimate: number): Promise<Card> {
 		return this.mingleRequest({
-			uri: `/api/v2/projects/${card.project}/cards/${card.number}.xml`,
+			method: 'put',
+			uri: `/api/v2/projects/${project}/cards/${cardNumber}.xml`,
 			qs: {
 				"card[properties][][name]": "Estimate",
 				"card[properties][][value]": estimate,

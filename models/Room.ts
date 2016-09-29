@@ -22,7 +22,7 @@ export class Room extends DataModel {
 	@HasMany(Card)
 	cards: Card[];
 
-	currentCard: Card;
+	currentCard: number;
 
 	@HasMany(RoomParticipant)
 	participants: RoomParticipant[];

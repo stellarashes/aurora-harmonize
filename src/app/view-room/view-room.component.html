@@ -1,26 +1,39 @@
-<div class="view-room-component">
-    Cards for estimate
-    <ul>
-        <li *ngFor="let card of roomInfo.cards">
-            #{{ card.number }}: {{ card.name }}
-        </li>
-    </ul>
+Cards for estimate
+<ul>
+    <li *ngFor="let card of roomInfo.cards" (click)="setCard(card)">
+        #{{ card.number }}: {{ card.name }}
+    </li>
+</ul>
 
-    Users
-    <ul>
-        <li *ngFor="let participant of roomInfo.participants">
-            {{ participant.name }} {{ participant.currentVote }}
-        </li>
-    </ul>
+Users
+<ul>
+    <li *ngFor="let participant of roomInfo.participants">
+        {{ participant.name }} {{ participant.currentVote }}
+    </li>
+</ul>
 
-    Vote
-    <ul>
-        <li *ngFor="let option of estimateOptions">
-            <button (click)="vote(option.value)">{{ option.display }}</button>
-        </li>
-    </ul>
-
-    <div class="admin-tools" *ngIf="isAdmin">
-        <button (click)="updateRoom()">Refresh Cards</button>
+<div class="current-card" *ngIf="roomInfo.currentCard">
+    Active Story
+    <div class="row">
+        <div class="card-header">
+            <h1>#{{ roomInfo.currentCard }}: {{ getCurrentCard().name }}</h1>
+            <div class="active-card-container" [innerHTML]="getCurrentCard().description"></div>
+        </div>
     </div>
+</div>
+
+Vote
+<ul>
+    <li *ngFor="let option of estimateOptions">
+        <button (click)="vote(option.value)">{{ option.display }}</button>
+    </li>
+</ul>
+
+<div class="admin-tools" *ngIf="isAdmin">
+    <button (click)="updateRoom()">Refresh Cards</button>
+    <button (click)="resetVotes()">Reset Votes</button>
+    <select [(ngModel)]="finalValue">
+        <option *ngFor="let option of estimateOptions" (ngValue)="option.value">{{ option.display }}</option>
+    </select>
+    <button (click)="finalizeVote()">Finalize Vote</button>
 </div>

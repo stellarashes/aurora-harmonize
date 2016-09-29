@@ -45,4 +45,12 @@ export class RoomController {
 		let roomService = await this.provider.findRoom(roomId);
 		return roomService.updateCards();
 	}
+
+	@Route('/:id/set-final-value')
+	@POST
+	public async setFinalValue(id: string, body: any) {
+		let roomId = parseInt(id);
+		let roomService = await this.provider.findRoom(roomId);
+		return roomService.setFinalValue(body.value);
+	}
 }
