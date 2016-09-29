@@ -23,14 +23,19 @@ export class SocketService {
 		});
 
 		return Observable.create((observer: any) => {
-			this.socket.on("userHasJoined", (item: any) => observer.next({ action: "userHasJoined", item: item }) );
-			this.socket.on("userHasLeft", item => observer.next({action: 'userHasLeft', item: item}));
-			this.socket.on("roomUpdated", (item: any) => observer.next({ action: "roomUpdated", item: item }) );
+			let events = ['userHasJoined', 'userHasLeft', 'updateCards', 'roomUpdated', 'vote'];
+			for (let event of events) {
+				this.register(event, observer);
+			}
 			return () => this.socket.close();
 		});
 	}
 
-	emit(type, data) {
+	register(event, observer) {
+		this.socket.on(event, item => observer.next({action: event, item: item}));
+	}
+
+	emit(type, data?) {
 		this.socket.emit(type, data);
 	}
 

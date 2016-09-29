@@ -23,12 +23,24 @@ export class RoomService {
 		return Promise.resolve(this.room);
 	}
 
+	public async updateCards() {
+		return this.getCards();
+	}
+
 	public async joinRoom(user: any) {
 		let participant = new RoomParticipant();
 		participant.name = user.name;
 		participant.role = user.role;
 		this.room.participants.push(participant);
-		return this.broadcastToRoom('userHasJoined', user);
+		return this.broadcastToRoom('userHasJoined', participant);
+	}
+
+	private async getParticipant(user: any): Promise<RoomParticipant> {
+		let target = this.room.participants.filter(x => x.name === user.name);
+		if (target && target.length) {
+			return Promise.resolve(target[0]);
+		}
+		return Promise.resolve(null);
 	}
 
 	public async leaveRoom(user: any) {
@@ -39,6 +51,7 @@ export class RoomService {
 	private async getCards() {
 		let service = Container.get(MingleService);
 		this.room.cards = await service.getCards(this.room.mingleProject);
+		return this.room.cards;
 	}
 
 	private async setupIO() {
@@ -54,19 +67,24 @@ export class RoomService {
 					this.leaveRoom(connectionUser);
 				}
 			});
+			socket.on('updateCards', () => {
+				this.broadcastToRoom('updateCards');
+			});
+			socket.on('vote', vote => {
+				this.getParticipant(connectionUser)
+					.then(participant => {
+						participant.currentVote = vote.value;
+						participant.currentVoteTime = new Date();
+						this.broadcastToRoom('vote', {
+							user: connectionUser,
+							participant: participant,
+						});
+					});
+			});
 		});
 	}
 
 	public broadcastToRoom(msg: string, param?: any) {
 		this.io.to(this.namespace).emit(msg, param);
-	}
-
-	private getParticipantById(id: string) {
-		let candidates = this.room.participants.filter(x => x.socketSessionId === id);
-		if (candidates && candidates.length) {
-			return candidates[0];
-		} else {
-			return null;
-		}
 	}
 }

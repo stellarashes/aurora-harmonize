@@ -31,6 +31,7 @@ Server.init({
 	.then(() => {
 		var app = Server.getApp();
 		app.use(express.static('../dist'));
+		app.use('/bower_components', express.static('../bower_components'));
 		let server = http.createServer(app);
 		let io = Socket(server);
 

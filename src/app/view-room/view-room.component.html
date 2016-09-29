@@ -9,7 +9,18 @@
     Users
     <ul>
         <li *ngFor="let participant of roomInfo.participants">
-            {{ participant.name }}
+            {{ participant.name }} {{ participant.currentVote }}
         </li>
     </ul>
+
+    Vote
+    <ul>
+        <li *ngFor="let option of estimateOptions">
+            <button (click)="vote(option.value)">{{ option.display }}</button>
+        </li>
+    </ul>
+
+    <div class="admin-tools" *ngIf="isAdmin">
+        <button (click)="updateRoom()">Refresh Cards</button>
+    </div>
 </div>

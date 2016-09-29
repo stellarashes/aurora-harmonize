@@ -12,8 +12,12 @@ import {NameService} from "../name.service";
 	providers: [RoomService, SocketService, CookieService]
 })
 export class ViewRoomComponent implements OnInit {
-
+	private roomNumber;
 	private roomInfo = {cards: [], participants: []};
+	private isAdmin = false;
+	private estimateOptions = [0, 1, 2, 3, 5, 8].map(x => {
+		return {display: x, value: x};
+	});
 
 	constructor(private route: ActivatedRoute,
 	            private roomService: RoomService,
@@ -23,18 +27,22 @@ export class ViewRoomComponent implements OnInit {
 
 	ngOnInit() {
 		this.route.params
-			.subscribe(data => this.initRoom(data['id']));
+			.subscribe(data => {
+				this.roomNumber = data['id'];
+				this.initRoom();
+			});
 	}
 
-	initRoom(roomNumber) {
-		this.roomService.getRoomInfo(roomNumber)
+	initRoom() {
+		this.roomService.getRoomInfo(this.roomNumber)
 			.subscribe(data => {
 				let result = data.json();
 				this.roomInfo = result.room;
+				this.isAdmin = result.admin;
 
-				this.socketService.start(roomNumber, {
+				this.socketService.start(this.roomNumber, {
 					name: this.nameService.get(),
-					role: result.admin ? 'admin' : 'user'
+					role: this.isAdmin ? 'admin' : 'user'
 				})
 					.subscribe(data => {
 						console.log(data);
@@ -48,9 +56,40 @@ export class ViewRoomComponent implements OnInit {
 								this.roomInfo.participants = this.roomInfo.participants.filter(x => x.name !== data.item.name);
 								break;
 							}
+							case 'updateCards': {
+								if (!this.isAdmin) {
+									this.roomService.getRoomInfo(this.roomNumber)
+										.subscribe(data => {
+											this.roomInfo.cards = data.json().room.cards;
+										});
+								}
+								break;
+							}
+							case 'vote': {
+								let target = this.roomInfo.participants.filter(x => x.id === data.item.participant.id);
+								console.log(this.roomInfo.participants);
+								if (target.length > 0) {
+									let participant = target[0];
+									participant.currentVote = data.item.participant.currentVote;
+									participant.currentVoteTime = data.item.participant.currentVoteTime;
+								}
+								break;
+							}
 						}
 					});
 			});
+	}
+
+	updateRoom() {
+		this.roomService.updateRoom(this.roomNumber)
+			.subscribe(data => {
+				this.roomInfo.cards = data.json();
+				this.socketService.emit('updateCards');
+			});
+	}
+
+	vote(value) {
+		this.socketService.emit('vote', {value: value});
 	}
 
 }

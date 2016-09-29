@@ -6,7 +6,8 @@ export class MingleService {
 		let result = await this.mingleRequest({
 			uri: `/api/v2/projects/${project}/cards.xml`,
 			qs: {
-				"filters": filters || ['[Type][is][Story]', '[Sprint][is][(Backlog)]', '[Delivery Status][is][Next for Estimation (Highest Priority)]']
+				"filters": filters || ['[Type][is][Story]', '[Sprint][is][(Backlog)]', '[Delivery Status][is][Next for Estimation (Highest Priority)]'],
+				"sort": "project_card_rank",
 			},
 			qsStringifyOptions: {
 				arrayFormat: 'brackets',

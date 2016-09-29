@@ -19,4 +19,9 @@ export class RoomService {
 		return this.http.get('/api/room/' + roomNumber);
 	}
 
+	updateRoom(roomNumber) {
+		return this.http.post('/api/room/' + roomNumber + '/refresh-cards', {});
+	}
+
+
 }
