@@ -6,6 +6,7 @@ import {RoomServiceProvider} from "./services/factories/RoomServiceProvider";
 import {SocketService} from "./services/SocketService";
 import * as express from "express";
 import {MingleService} from "./services/MingleService";
+import * as session from "express-session";
 
 // let service = Container.get(MingleService);
 // service.getCards('members___engagement')
@@ -15,7 +16,18 @@ import {MingleService} from "./services/MingleService";
 // 		});
 // 	});
 
-Server.init()
+let RedisStore = require('connect-redis')(session);
+
+let sessionMW = session({
+	store: new RedisStore(),
+	secret: 'ceiling cat',
+	resave: false,
+	saveUninitialized: true,
+});
+
+Server.init({
+	middlewares: [sessionMW]
+})
 	.then(() => {
 		var app = Server.getApp();
 		app.use(express.static('../dist'));

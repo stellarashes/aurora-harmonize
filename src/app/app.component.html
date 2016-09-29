@@ -4,4 +4,5 @@
 <nav>
   <a routerLink="/room" routerLinkActive="active">Create Room</a>
 </nav>
+<input [(ngModel)]="name" (change)="updateName()" placeholder="Enter your name" />
 <router-outlet></router-outlet>

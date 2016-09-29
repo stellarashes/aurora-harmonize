@@ -5,4 +5,11 @@
             #{{ card.number }}: {{ card.name }}
         </li>
     </ul>
+
+    Users
+    <ul>
+        <li *ngFor="let participant of roomInfo.participants">
+            {{ participant.name }}
+        </li>
+    </ul>
 </div>

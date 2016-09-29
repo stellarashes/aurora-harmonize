@@ -26,10 +26,14 @@ export class RoomService {
 	public async joinRoom(user: any) {
 		let participant = new RoomParticipant();
 		participant.name = user.name;
-		participant.socketSessionId = user.id;
 		participant.role = user.role;
 		this.room.participants.push(participant);
-		return this.broadcastToRoom('userHasJoined', [user]);
+		return this.broadcastToRoom('userHasJoined', user);
+	}
+
+	public async leaveRoom(user: any) {
+		this.room.participants = this.room.participants.filter(x => x.name !== user.name);
+		await this.broadcastToRoom('userHasLeft', user);
 	}
 
 	private async getCards() {
@@ -39,30 +43,22 @@ export class RoomService {
 
 	private async setupIO() {
 		this.io.on('connection', socket => {
+			let connectionUser;
 			socket.join(this.namespace);
-			socket.on('join', (id, user) => {
-				user.id = id;
-				this.io.to(this.namespace).emit('userHasJoined', user);
+			socket.on('join', user => {
+				connectionUser = user;
 				this.joinRoom(user);
 			});
+			socket.on('disconnect', () => {
+				if (connectionUser) {
+					this.leaveRoom(connectionUser);
+				}
+			});
 		});
-		// TODO disconnect logic
 	}
 
-	public async broadcastToRoom(msg: string, args?: any[]) {
-		return new Promise((resolve, reject) => {
-			var targetNamespace = this.io.to(this.namespace);
-			let targetFunction = targetNamespace.emit;
-			let fullArgs = args ? Array.from(args) : [];
-			fullArgs.unshift(msg);
-			fullArgs.push((err, result) => {
-				if (err)
-					reject(err);
-				else
-					resolve(result);
-			});
-			targetFunction.apply(targetNamespace, fullArgs);
-		});
+	public broadcastToRoom(msg: string, param?: any) {
+		this.io.to(this.namespace).emit(msg, param);
 	}
 
 	private getParticipantById(id: string) {
