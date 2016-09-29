@@ -1,10 +1,9 @@
 import {Route, POST, GET} from "ts-chassis";
 import {Inject, Container} from "typescript-ioc";
-import {SocketService} from "../services/SocketService";
 import {RoomServiceProvider} from "../services/factories/RoomServiceProvider";
 import {RoomService} from "../services/RoomService";
 
-@Route('/room')
+@Route('/api/room')
 export class RoomController {
 	@Inject private provider: RoomServiceProvider;
 	private roomService: RoomService;
@@ -15,7 +14,7 @@ export class RoomController {
 
 	@POST
 	public async createRoom(body: any) {
-		this.roomService = await this.provider.createOrFindRoom();
+		this.roomService = await this.provider.createOrFindRoom(body);
 		return this.roomService.getRoomInfo();
 	}
 

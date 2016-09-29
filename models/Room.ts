@@ -8,6 +8,9 @@ export class Room extends DataModel {
 	id: string;
 
 	@Column()
+	name: string;
+
+	@Column()
 	roomNumber: number;
 
 	@Column()

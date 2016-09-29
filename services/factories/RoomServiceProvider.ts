@@ -5,7 +5,7 @@ import {Room} from "../../models/Room";
 
 @Singleton
 export class RoomServiceProvider {
-	private allRooms: Map<string, RoomService>;
+	private allRooms: Map<string, RoomService> = new Map<string, RoomService>();
 	private socket: SocketService;
 	public setSocket(socket: SocketService) {
 		this.socket = socket;

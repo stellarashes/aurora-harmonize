@@ -29,7 +29,7 @@ export class RoomService {
 		participant.socketSessionId = user.id;
 		participant.role = user.role;
 		this.room.participants.push(participant);
-		return this.broadcastToRoom('userHasJoined', user);
+		return this.broadcastToRoom('userHasJoined', [user]);
 	}
 
 	private async getCards() {
@@ -49,7 +49,7 @@ export class RoomService {
 		// TODO disconnect logic
 	}
 
-	public async broadcastToRoom(msg: string, ...args: any[]) {
+	public async broadcastToRoom(msg: string, args?: any[]) {
 		return new Promise((resolve, reject) => {
 			var targetNamespace = this.io.to(this.namespace);
 			let targetFunction = targetNamespace.emit;

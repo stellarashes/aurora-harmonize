@@ -1,11 +1,23 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import {ModuleWithProviders} from "@angular/core";
+import {Routes, RouterModule} from "@angular/router";
+import {RoomComponent} from "./room/room.component";
+import {ViewRoomComponent} from "./view-room/view-room.component";
 
-const routes: Routes = [];
+const routes: Routes = [
+	{
+		path: '',
+		component: RoomComponent
+	},
+	{
+		path: 'room',
+		component: RoomComponent
+	},
+	{
+		path: 'room/:id',
+		component: ViewRoomComponent
+	}
+];
 
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-  providers: []
-})
-export class AuroraHarmonizeAngularRoutingModule { }
+export const appRoutingProviders: any[] = [];
+
+export const routing: ModuleWithProviders = RouterModule.forRoot(routes);
