@@ -29,7 +29,7 @@ export class RoomService {
 		participant.socketSessionId = user.id;
 		participant.role = user.role;
 		this.room.participants.push(participant);
-		this.room.save();
+		return this.broadcastToRoom('userHasJoined', user);
 	}
 
 	private async getCards() {
@@ -45,24 +45,23 @@ export class RoomService {
 				this.io.to(this.namespace).emit('userHasJoined', user);
 				this.joinRoom(user);
 			});
-			socket.on('vote', (id, vote) => {
-				vote.id = id;
-				let participant = this.getParticipantById(id);
-				if (!participant) {
-					participant.currentVote = vote.value;
-					this.io.to(this.namespace).emit('userHasVoted', {
-						id: id,
-						name: participant.name,
-						vote: vote
-					});
-				}
-			});
-			socket.on('startVote', (id, card) => {
+		});
+		// TODO disconnect logic
+	}
 
+	public async broadcastToRoom(msg: string, ...args: any[]) {
+		return new Promise((resolve, reject) => {
+			var targetNamespace = this.io.to(this.namespace);
+			let targetFunction = targetNamespace.emit;
+			let fullArgs = args ? Array.from(args) : [];
+			fullArgs.unshift(msg);
+			fullArgs.push((err, result) => {
+				if (err)
+					reject(err);
+				else
+					resolve(result);
 			});
-			socket.on('finish', (id, finishOptions) => {
-
-			});
+			targetFunction.apply(targetNamespace, fullArgs);
 		});
 	}
 

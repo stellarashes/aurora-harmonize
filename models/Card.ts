@@ -1,6 +1,13 @@
 import {DataModel, Table, Column} from "ts-chassis";
 
-@Table()
+@Table({
+	indexes: [
+		{
+			unique: true,
+			fields: ['project', 'number']
+		}
+	]
+})
 export class Card extends DataModel {
 
 	@Column()
@@ -8,6 +15,9 @@ export class Card extends DataModel {
 
 	type: string;
 	description: string;
+
+	@Column()
+	project: string;
 
 	@Column()
 	number: number;
@@ -19,6 +29,7 @@ export class Card extends DataModel {
 		let card = new Card();
 		card.type = object.card_type[0].name[0];
 		card.description = object.description[0];
+		card.project = object.project[0].identifier[0];
 		card.number = parseInt(object.number[0]._);
 		card.rank = object.project_card_rank[0];
 		card.tags = object.tags;

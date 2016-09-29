@@ -11,16 +11,17 @@ export class RoomServiceProvider {
 		this.socket = socket;
 	}
 
-	public async createOrFindRoom(roomNumber?: string): Promise<RoomService> {
-		if (roomNumber) {
-			if (this.allRooms.has(roomNumber))
-				return this.allRooms.get(roomNumber);
+	public async createOrFindRoom(options?: any): Promise<RoomService> {
+		if (options && options.roomNumber) {
+			if (this.allRooms.has(options.roomNumber))
+				return this.allRooms.get(options.roomNumber);
 		}
 
 		let roomService = Container.get(RoomService);
 		let room;
 		while (!room || this.allRooms.has(room.roomNumber)) {
 			room = new Room();
+			room.mingleProject = options.project;
 		}
 		await roomService.initialize(room, this.socket);
 		this.allRooms.set(room.roomNumber, roomService);
