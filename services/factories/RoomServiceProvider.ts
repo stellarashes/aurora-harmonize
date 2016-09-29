@@ -5,7 +5,7 @@ import {Room} from "../../models/Room";
 
 @Singleton
 export class RoomServiceProvider {
-	private allRooms: Map<string, RoomService> = new Map<string, RoomService>();
+	private allRooms: Map<number, RoomService> = new Map<number, RoomService>();
 	private socket: SocketService;
 	public setSocket(socket: SocketService) {
 		this.socket = socket;
@@ -21,14 +21,14 @@ export class RoomServiceProvider {
 		let room;
 		while (!room || this.allRooms.has(room.roomNumber)) {
 			room = new Room();
-			room.mingleProject = options.project;
+			room.mingleProject = options.project || '';
 		}
 		await roomService.initialize(room, this.socket);
 		this.allRooms.set(room.roomNumber, roomService);
 		return roomService;
 	}
 
-	public async findRoom(roomId: string) {
+	public async findRoom(roomId: number) {
 		return this.allRooms.get(roomId);
 	}
 }

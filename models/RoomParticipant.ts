@@ -8,6 +8,7 @@ export class RoomParticipant extends DataModel {
 	role: string;
 
 	currentVote: string;
+	currentVoteTime: Date;
 	socketSessionId: string;
 
 }

@@ -11,7 +11,7 @@ export class RoomService {
 
 	public async initialize(room: Room, socket: SocketService) {
 		this.room = room;
-		this.namespace = '/' + room.id;
+		this.namespace = '/' + room.roomNumber;
 		this.io = socket.createNamespace(this.namespace);
 		return Promise.all([
 			this.setupIO(),

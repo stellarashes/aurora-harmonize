@@ -5,6 +5,15 @@ import {Container} from "typescript-ioc";
 import {RoomServiceProvider} from "./services/factories/RoomServiceProvider";
 import {SocketService} from "./services/SocketService";
 import * as express from "express";
+import {MingleService} from "./services/MingleService";
+
+// let service = Container.get(MingleService);
+// service.getCards('members___engagement')
+// 	.then(x => {
+// 		x.forEach(y => {
+// 			console.log(y.toJSON());
+// 		});
+// 	});
 
 Server.init()
 	.then(() => {

@@ -22,6 +22,7 @@ export class Card extends DataModel {
 	@Column()
 	number: number;
 
+	name: string;
 	rank: string;
 	tags: string[];
 
@@ -29,6 +30,7 @@ export class Card extends DataModel {
 		let card = new Card();
 		card.type = object.card_type[0].name[0];
 		card.description = object.description[0];
+		card.name = object.name[0];
 		card.project = object.project[0].identifier[0];
 		card.number = parseInt(object.number[0]._);
 		card.rank = object.project_card_rank[0];

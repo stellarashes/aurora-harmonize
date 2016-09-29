@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import {CreateRoomService} from "../create-room.service";
+import {RoomService} from "../create-room.service";
 import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.css'],
-  providers: [CreateRoomService]
+  providers: [RoomService]
 })
 export class RoomComponent implements OnInit {
 
-  roomName: string;
-  mingleProject: string;
+  roomName: string = 'example name';
+  mingleProject: string = 'members___engagement';
 
-  constructor(private createRoomService: CreateRoomService, private router: Router) { }
+  constructor(private createRoomService: RoomService, private router: Router) { }
 
   ngOnInit() {
   }

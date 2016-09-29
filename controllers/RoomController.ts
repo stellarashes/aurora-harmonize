@@ -15,13 +15,16 @@ export class RoomController {
 	@POST
 	public async createRoom(body: any) {
 		this.roomService = await this.provider.createOrFindRoom(body);
-		return this.roomService.getRoomInfo();
+		let roomInfo = await this.roomService.getRoomInfo();
+		return {
+			roomNumber: roomInfo.roomNumber
+		};
 	}
 
 	@Route('/:id')
 	@GET
 	public async getRoomInfo(id: string) {
-		this.roomService = await this.provider.findRoom(id);
+		this.roomService = await this.provider.findRoom(parseInt(id));
 		return this.roomService.getRoomInfo();
 	}
 }

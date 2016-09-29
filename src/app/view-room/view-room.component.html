@@ -1,3 +1,8 @@
-<p>
-  view-room works!
-</p>
+<div class="view-room-component">
+    Cards for estimate
+    <ul>
+        <li *ngFor="let card of roomInfo.cards">
+            #{{ card.number }}: {{ card.name }}
+        </li>
+    </ul>
+</div>
