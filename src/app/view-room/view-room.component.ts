@@ -12,6 +12,7 @@ import {NameService} from "../name.service";
 	providers: [RoomService, SocketService, CookieService]
 })
 export class ViewRoomComponent implements OnInit {
+	private name;
 	private roomNumber;
 	private roomInfo = {cards: [], participants: [], currentCard: null, forceShow: false};
 	private isAdmin = false;
@@ -19,6 +20,7 @@ export class ViewRoomComponent implements OnInit {
 		return {display: x, value: x};
 	});
 	private finalValue: number;
+	private needsName = true;
 
 	constructor(private route: ActivatedRoute,
 	            private roomService: RoomService,
@@ -27,6 +29,31 @@ export class ViewRoomComponent implements OnInit {
 	}
 
 	ngOnInit() {
+		this.name = this.nameService.get();
+		this.needsName = !this.name;
+		if (!this.needsName) {
+			this.loadParams();
+		}
+	}
+
+	updateName() {
+		this.nameService.set(this.name);
+	}
+
+	keydown(event) {
+		if (event.keyCode === 13)
+			this.validateName();
+	}
+
+	validateName() {
+		if (this.name) {
+			this.updateName();
+			this.needsName = false;
+			this.loadParams();
+		}
+	}
+
+	loadParams() {
 		this.route.params
 			.subscribe(data => {
 				this.roomNumber = data['id'];
@@ -135,7 +162,10 @@ export class ViewRoomComponent implements OnInit {
 			}
 		}
 
-		return {};
+		return {
+			name: "Waiting",
+			description: "Waiting on Moderator to choose a card",
+		};
 	}
 
 	finalizeVote() {

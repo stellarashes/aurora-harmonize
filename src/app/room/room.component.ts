@@ -11,7 +11,7 @@ import {Router} from "@angular/router";
 export class RoomComponent implements OnInit {
 
   roomName: string = "room";
-  mingleProject: string;
+  mingleProject: string = 'members___engagement';
 
   constructor(private createRoomService: RoomService, private router: Router) { }
 

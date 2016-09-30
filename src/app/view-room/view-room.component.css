@@ -1,5 +1,84 @@
-.active-card-container {
-    width: 640px;
-    height: 300px;
+.active-card-description-container {
+    height: 60vh;
     overflow: scroll;
+    background-color: #ffffff;
+    padding: 0.5em;
+    box-shadow: 2px 2px 2px 2px rgba(94, 94, 94, 0.75);
+}
+
+.card-header {
+    background-color: #73afb6;
+    padding: 0.5em;
+    box-shadow: 2px 2px 2px 2px rgba(94, 94, 94, 0.75);
+}
+
+.card-reader h4 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.player-row {
+    padding: 1.5em;
+}
+
+.player-estimate-container {
+    background-color: #ffffff;
+}
+
+.estimation-option-button {
+    width: 100%;
+    height: 60px;
+    background-color: #ffffff;
+    border: none;
+    box-shadow: 2px 2px 2px 2px rgba(94, 94, 94, 0.75);
+}
+
+.estimate-option {
+    padding: 0.5em;
+}
+
+.estimate-option-inner {
+    padding: 0.5em 0;
+    border: 1px solid #dddce2;
+}
+
+.admin-tools {
+    padding: 1em 0.5em;
+}
+
+.admin-tools button {
+    margin: 0.5em;
+}
+
+.cards-for-estimate-container {
+    padding: 1em;
+}
+
+.cards-for-estimate-table {
+
+}
+
+#final-value-select {
+    margin: 7px;
+    width: 80%;
+}
+
+.cards-for-estimate-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.cards-for-estimate-list li {
+    padding: 0.5em;
+    margin: 0;
+    border: 1px solid #dddce2;
+    cursor: pointer;
+}
+
+.card-for-estimate-text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }

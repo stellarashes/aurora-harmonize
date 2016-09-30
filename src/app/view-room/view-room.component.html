@@ -1,46 +1,61 @@
-Cards for estimate
-<ul>
-    <li *ngFor="let card of roomInfo.cards" (click)="setCard(card)">
-        #{{ card.number }}: {{ card.name }}
-    </li>
-</ul>
-
-Users
-<ul>
-    <li *ngFor="let participant of roomInfo.participants">
-        {{ participant.name }}
-
-        <span class="glyphicon glyphicon-check" aria-hidden="true" *ngIf="hasParticpantVoted(participant)"></span>
-
-        <span *ngIf="shouldShowVotes()">
-            {{ participant.currentVote }}
-        </span>
-    </li>
-</ul>
-
-<div class="current-card" *ngIf="roomInfo.currentCard">
-    Active Story
-    <div class="row">
-        <div class="card-header">
-            <h1>#{{ roomInfo.currentCard }}: {{ getCurrentCard().name }}</h1>
-            <div class="active-card-container" [innerHTML]="getCurrentCard().description"></div>
-        </div>
+<div class="name-container" *ngIf="needsName" class="row">
+    <div class="name-input" class="col-sm-8">
+        Welcome! Please enter your name to join:
+        <input [(ngModel)]="name" class="form-control" (change)="updateName()" (keydown)="keydown($event)"/>
     </div>
 </div>
+<div class="room-container" *ngIf="!needsName">
+    <div class="row">
+        <div class="active-card-container col-md-8">
+            <div class="card-header">
+                <h4>#{{ roomInfo.currentCard }}: {{ getCurrentCard().name }}</h4>
+            </div>
+            <div class="active-card-description-container" [innerHTML]="getCurrentCard().description"></div>
+        </div>
 
-Vote
-<ul>
-    <li *ngFor="let option of estimateOptions">
-        <button (click)="vote(option.value)">{{ option.display }}</button>
-    </li>
-</ul>
+        <div class="player-estimate-container col-md-4">
 
-<div class="admin-tools" *ngIf="isAdmin">
-    <button (click)="updateRoom()">Refresh Cards</button>
-    <button (click)="resetVotes()">Reset Votes</button>
-    <button (click)="forceShow()">Show Votes</button>
-    <select [(ngModel)]="finalValue">
-        <option *ngFor="let option of estimateOptions" (ngValue)="option.value">{{ option.display }}</option>
-    </select>
-    <button (click)="finalizeVote()">Finalize Vote</button>
+            <div class="row estimate-row">
+                <div class="estimate-option col-lg-2 col-sm-3" *ngFor="let option of estimateOptions">
+                    <button class="estimation-option-button" (click)="vote(option.value)">
+                        <div class="estimate-option-outer">
+                            <div class="estimate-option-inner">
+                                {{ option.display }}
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="row player-row" *ngFor="let participant of roomInfo.participants">
+                <span class="glyphicon glyphicon-user"></span> {{ participant.name }}
+                <span class="glyphicon glyphicon-check" aria-hidden="true"
+                      *ngIf="hasParticpantVoted(participant)"></span>
+                <span *ngIf="shouldShowVotes()">
+                    {{ participant.currentVote }}
+                </span>
+            </div>
+            <div class="admin-tools row" *ngIf="isAdmin">
+                <button class="col-sm-10 btn btn-success" (click)="updateRoom()">Refresh Cards</button>
+                <button class="col-sm-10 btn btn-warning" (click)="resetVotes()">Reset Votes</button>
+                <button class="col-sm-10 btn btn-success" (click)="forceShow()">Show Votes</button>
+                <select class="form-control" id="final-value-select" [(ngModel)]="finalValue">
+                    <option *ngFor="let option of estimateOptions" (ngValue)="option.value">{{ option.display }}</option>
+                </select>
+                <button class="col-lg-10 btn btn-danger" (click)="finalizeVote()">Finalize Vote</button>
+            </div>
+
+
+            <div class="cards-for-estimate-container row">
+                <h4>Cards to estimate</h4>
+                <ul class="cards-for-estimate-list">
+                    <li *ngFor="let card of roomInfo.cards" (click)="setCard(card)">
+                        <div class="card-for-estimate-text">#{{ card.number }}: {{ card.name }}</div>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+    </div>
+
 </div>
