@@ -1,10 +1,18 @@
-<div class="container">
-    <h1>
-        Harmonize
-    </h1>
-    <nav>
-        <a routerLink="/room" routerLinkActive="active">Create Room</a>
-    </nav>
-    <input [(ngModel)]="name" (change)="updateName()" placeholder="Enter your name"/>
-    <router-outlet></router-outlet>
+<div class="header-container">
+    <div class="container">
+        <div class="logo"><h1>
+            Harmonize
+        </h1></div>
+        <div class="name-container" (click)="startEdit()">
+            <span class="glyphicon glyphicon-user"></span>
+            <span *ngIf="!isEditingName">{{ name }}</span>
+            <span *ngIf="isEditingName"><input type="textbox" [(ngModel)]="name" (change)="saveName()" (keydown)="keydown($event)"/></span>
+        </div>
+    </div>
+</div>
+
+<div class="content-container">
+    <div class="container">
+        <router-outlet></router-outlet>
+    </div>
 </div>

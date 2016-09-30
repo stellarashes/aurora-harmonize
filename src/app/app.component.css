@@ -1,0 +1,23 @@
+
+.header-container {
+    width: 100%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #d1d2cd;
+    height: 120px;
+}
+
+.logo {
+    float: left;
+}
+
+.name-container {
+    padding: 1em 0;
+    float: right;
+    font-size: 1.4em;
+    cursor: hand;
+}
+
+.content-container {
+    padding-top: 1em;
+    width: 100%;
+}
