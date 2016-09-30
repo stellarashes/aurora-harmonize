@@ -1,8 +1,10 @@
 <div class="header-container">
     <div class="container">
-        <div class="logo"><h1>
-            Harmonize
-        </h1></div>
+        <div class="logo">
+            <a href="/">
+                <img src="/assets/logo.png" height="100"/>
+            </a>
+        </div>
         <div class="name-container" (click)="startEdit()">
             <span class="glyphicon glyphicon-user"></span>
             <span *ngIf="!isEditingName">{{ name }}</span>
