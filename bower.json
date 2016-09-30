@@ -1,0 +1,20 @@
+{
+  "name": "aurora-harmonize",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Eugene Chang <eugene.chang@careerbuilder.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/stellarashes/aurora-harmonize",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  }
+}
