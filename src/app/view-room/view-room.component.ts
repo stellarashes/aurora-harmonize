@@ -124,6 +124,13 @@ export class ViewRoomComponent implements OnInit {
 								this.roomInfo.forceShow = true;
 								break;
 							}
+							case 'setFinalValue': {
+								for (let card of this.roomInfo.cards) {
+									if (card.number == data.item.cardNumber) {
+										card.finalValue = data.item.value;
+									}
+								}
+							}
 						}
 					});
 			});
@@ -170,7 +177,7 @@ export class ViewRoomComponent implements OnInit {
 
 	finalizeVote() {
 		if (this.isAdmin && typeof(this.finalValue) !== 'undefined') {
-			this.roomService.finalizeValue(this.roomNumber, this.finalValue)
+			this.roomService.finalizeValue(this.roomNumber, this.roomInfo.currentCard, this.finalValue)
 				.subscribe(data => console.log(data));
 		}
 	}
@@ -189,4 +196,5 @@ export class ViewRoomComponent implements OnInit {
 	hasParticpantVoted(participant) {
 		return participant.currentVote !== null && typeof(participant.currentVote) !== 'undefined'
 	}
+
 }

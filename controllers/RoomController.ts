@@ -1,7 +1,6 @@
 import {Route, POST, GET, UPDATE, PUT} from "ts-chassis";
 import {Inject, Container} from "typescript-ioc";
 import {RoomServiceProvider} from "../services/factories/RoomServiceProvider";
-import {RoomService} from "../services/RoomService";
 
 @Route('/api/room')
 export class RoomController {
@@ -51,6 +50,6 @@ export class RoomController {
 	public async setFinalValue(id: string, body: any) {
 		let roomId = parseInt(id);
 		let roomService = await this.provider.findRoom(roomId);
-		return roomService.setFinalValue(body.value);
+		return roomService.setFinalValue(body.cardNumber, body.value);
 	}
 }

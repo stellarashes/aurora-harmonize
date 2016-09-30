@@ -55,8 +55,12 @@
     padding: 1em;
 }
 
-.cards-for-estimate-table {
+.active-card {
+    background-color: #e2c4a5 !important;
+}
 
+.completed-card {
+    background-color: #9ae2a2;
 }
 
 #final-value-select {

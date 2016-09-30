@@ -23,8 +23,8 @@ export class RoomService {
 		return this.http.post(`/api/room/${roomNumber}/refresh-cards`, {});
 	}
 
-	finalizeValue(roomNumber, value) {
-		return this.http.post(`/api/room/${roomNumber}/set-final-value`, {value: value});
+	finalizeValue(roomNumber, cardNumber, value) {
+		return this.http.post(`/api/room/${roomNumber}/set-final-value`, {cardNumber: cardNumber, value: value});
 	}
 
 

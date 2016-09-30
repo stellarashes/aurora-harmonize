@@ -11,7 +11,7 @@ import {DataModel, Table, Column} from "ts-chassis";
 export class Card extends DataModel {
 
 	@Column()
-	finalValue: string;
+	finalValue: number;
 
 	type: string;
 	description: string;
@@ -36,6 +36,16 @@ export class Card extends DataModel {
 		card.rank = object.project_card_rank[0];
 		card.tags = object.tags;
 
+		for (let property of object.properties[0].property)
+		{
+			if (property.name[0] === 'Estimate') {
+				if (typeof(property.value[0]) === 'string')
+					card.finalValue = parseInt(property.value[0]);
+				else if (typeof(property.value[0]) === 'number')
+					card.finalValue = property.value[0];
+				break;
+			}
+		}
 		return card;
 	}
 }

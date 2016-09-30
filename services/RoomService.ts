@@ -105,12 +105,21 @@ export class RoomService {
 		this.io.to(this.namespace).emit(msg, param);
 	}
 
-	public async setFinalValue(value: number) {
-		if (this.room.currentCard) {
-			await this.mingleService.setEstimate(this.room.mingleProject, this.room.currentCard, value);
-			return {
-				status: 'success'
-			};
+	public async setFinalValue(cardNumber: number, value: number) {
+		await this.mingleService.setEstimate(this.room.mingleProject, cardNumber, value);
+		this.broadcastToRoom('setFinalValue', {
+			cardNumber: cardNumber,
+			value: value
+		});
+		for (let card of this.room.cards) {
+			if (card.number == cardNumber) {
+				card.finalValue = value;
+				break;
+			}
 		}
+
+		return {
+			status: 'success'
+		};
 	}
 }

@@ -48,8 +48,12 @@
             <div class="cards-for-estimate-container row">
                 <h4>Cards to estimate</h4>
                 <ul class="cards-for-estimate-list">
-                    <li *ngFor="let card of roomInfo.cards" (click)="setCard(card)">
-                        <div class="card-for-estimate-text">#{{ card.number }}: {{ card.name }}</div>
+                    <li *ngFor="let card of roomInfo.cards" (click)="setCard(card)"
+                        [ngClass]="{'active-card': card.number == roomInfo.currentCard, 'completed-card': card.finalValue || card.finalValue === 0}">
+                        <div class="card-for-estimate-text">
+                            <span *ngIf="card.finalValue">({{card.finalValue}})</span>
+                            #{{ card.number }}: {{ card.name }}
+                        </div>
                     </li>
                 </ul>
 
