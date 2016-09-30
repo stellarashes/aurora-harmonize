@@ -6,6 +6,8 @@ import {CookieService} from "angular2-cookie/services/cookies.service";
 import {NameService} from "../name.service";
 import * as moment from "moment";
 
+declare var $: any;
+
 @Component({
 	selector: 'app-view-room',
 	templateUrl: './view-room.component.html',
@@ -89,12 +91,14 @@ export class ViewRoomComponent implements OnInit {
 						console.log(data);
 						switch (data.action) {
 							case 'userHasJoined': {
-								if (this.roomInfo.participants.filter(x => x.name === data.item).length === 0)
+								if (this.roomInfo.participants.filter(x => x.name === data.item.name).length === 0)
 									this.roomInfo.participants.push(data.item);
+								this.notify(`${data.item.name} has joined the room.`);
 								break;
 							}
 							case 'userHasLeft': {
 								this.roomInfo.participants = this.roomInfo.participants.filter(x => x.name !== data.item.name);
+								this.notify(`${data.item.name} has left the room.`);
 								break;
 							}
 							case 'updateCards': {
@@ -103,6 +107,7 @@ export class ViewRoomComponent implements OnInit {
 										.subscribe(data => {
 											this.roomInfo.cards = data.json().room.cards;
 										});
+									this.notify(`Cards have been refreshed.`);
 								}
 								break;
 							}
@@ -110,6 +115,7 @@ export class ViewRoomComponent implements OnInit {
 								let target = this.roomInfo.participants.filter(x => x.id === data.item.participant.id);
 								if (target.length > 0) {
 									let participant = target[0];
+									this.notify(`${participant.name} has voted.`);
 									participant.currentVote = data.item.participant.currentVote;
 									participant.currentVoteTime = data.item.participant.currentVoteTime;
 
@@ -122,10 +128,12 @@ export class ViewRoomComponent implements OnInit {
 								break;
 							}
 							case 'setCard': {
+								this.notify(`A new active story has been set.`);
 								this.roomInfo.currentCard = data.item;
 								break;
 							}
 							case 'resetVotes': {
+								this.notify(`Votes have been cleared.`);
 								this.roomInfo.participants.forEach(x => {
 									x.currentVote = null;
 									x.currentVoteTime = null;
@@ -140,6 +148,7 @@ export class ViewRoomComponent implements OnInit {
 								break;
 							}
 							case 'setFinalValue': {
+								this.notify(`Card ${data.item.cardNumber} has been finalized to ${data.item.value}`);
 								for (let card of this.roomInfo.cards) {
 									if (card.number == data.item.cardNumber) {
 										card.finalValue = data.item.value;
@@ -148,12 +157,24 @@ export class ViewRoomComponent implements OnInit {
 								break;
 							}
 							case 'startVotes': {
+								this.notify(`Voting has started.`);
 								this.roomInfo.startedTime = moment(data.item);
 								break;
 							}
 						}
 					});
 			});
+	}
+
+	notify(message: string, options?) {
+		options = options || {};
+		options = Object.assign({}, options, {placement: {
+			from: "bottom",
+			align: "right",
+		}});
+		$.notify({
+			message: message
+		}, options);
 	}
 
 	updateRoom() {
