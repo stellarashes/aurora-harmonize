@@ -38,7 +38,7 @@ Server.init({
 		let provider = Container.get(RoomServiceProvider);
 		provider.setSocket(new SocketService(io));
 
-		server.listen(3000);
+		server.listen(process.env.PORT || 80);
 	})
 	.catch(e => {
 		console.error(e);
