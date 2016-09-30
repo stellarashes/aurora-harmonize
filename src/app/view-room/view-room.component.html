@@ -14,7 +14,6 @@
         </div>
 
         <div class="player-estimate-container col-md-4">
-
             <div class="row estimate-row">
                 <div class="estimate-option col-lg-2 col-sm-3" *ngFor="let option of estimateOptions">
                     <button class="estimation-option-button" (click)="vote(option.value)">
@@ -26,6 +25,9 @@
                     </button>
                 </div>
             </div>
+            <div class="timer-container row" *ngIf="roomInfo.startedTime">
+                {{ timeString }}
+            </div>
             <div class="row player-row" *ngFor="let participant of roomInfo.participants">
                 <span class="glyphicon glyphicon-user"></span> {{ participant.name }}
                 <span class="glyphicon glyphicon-check" aria-hidden="true"
@@ -35,6 +37,7 @@
                 </span>
             </div>
             <div class="admin-tools row" *ngIf="isAdmin">
+                <button class="col-sm-10 btn btn-success" (click)="startVotes()">Start</button>
                 <button class="col-sm-10 btn btn-success" (click)="updateRoom()">Refresh Cards</button>
                 <button class="col-sm-10 btn btn-warning" (click)="resetVotes()">Reset Votes</button>
                 <button class="col-sm-10 btn btn-success" (click)="forceShow()">Show Votes</button>

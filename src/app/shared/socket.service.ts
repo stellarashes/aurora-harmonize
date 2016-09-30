@@ -23,7 +23,7 @@ export class SocketService {
 		});
 
 		return Observable.create((observer: any) => {
-			let events = ['userHasJoined', 'userHasLeft', 'updateCards', 'roomUpdated', 'vote', 'setCard', 'resetVotes', 'forceShow', 'setFinalValue'];
+			let events = ['userHasJoined', 'userHasLeft', 'updateCards', 'roomUpdated', 'vote', 'setCard', 'resetVotes', 'forceShow', 'setFinalValue', 'startVotes'];
 			for (let event of events) {
 				this.register(event, observer);
 			}

@@ -92,11 +92,16 @@ export class RoomService {
 					x.currentVoteTime = null;
 				});
 				this.room.forceShow = false;
+				this.room.startedTime = null;
 				this.broadcastToRoom('resetVotes');
 			});
 			socket.on('forceShow', () => {
 				this.room.forceShow = true;
 				this.broadcastToRoom('forceShow');
+			});
+			socket.on('startVotes', () => {
+				this.room.startedTime = new Date().toISOString();
+				this.broadcastToRoom('startVotes', this.room.startedTime);
 			});
 		});
 	}

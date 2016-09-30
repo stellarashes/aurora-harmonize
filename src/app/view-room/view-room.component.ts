@@ -4,6 +4,7 @@ import {RoomService} from "../create-room.service";
 import {SocketService} from "../shared/socket.service";
 import {CookieService} from "angular2-cookie/services/cookies.service";
 import {NameService} from "../name.service";
+import * as moment from "moment";
 
 @Component({
 	selector: 'app-view-room',
@@ -14,13 +15,15 @@ import {NameService} from "../name.service";
 export class ViewRoomComponent implements OnInit {
 	private name;
 	private roomNumber;
-	private roomInfo = {cards: [], participants: [], currentCard: null, forceShow: false};
+	private roomInfo = {cards: [], participants: [], currentCard: null, forceShow: false, startedTime: null};
 	private isAdmin = false;
 	private estimateOptions = [1, 2, 3, 5, 8].map(x => {
 		return {display: x, value: x};
 	});
 	private finalValue: number;
 	private needsName = true;
+	private timeString: string;
+	private hasAlerted = false;
 
 	constructor(private route: ActivatedRoute,
 	            private roomService: RoomService,
@@ -34,6 +37,13 @@ export class ViewRoomComponent implements OnInit {
 		if (!this.needsName) {
 			this.loadParams();
 		}
+
+
+		setInterval(() => {
+			if (this.roomInfo.startedTime) {
+				this.timeString = this.timeElapsed();
+			}
+		}, 1000);
 	}
 
 	updateName() {
@@ -66,6 +76,9 @@ export class ViewRoomComponent implements OnInit {
 			.subscribe(data => {
 				let result = data.json();
 				this.roomInfo = result.room;
+				if (typeof (this.roomInfo.startedTime) === 'string') {
+					this.roomInfo.startedTime = moment(this.roomInfo.startedTime);
+				}
 				this.isAdmin = result.admin;
 
 				this.socketService.start(this.roomNumber, {
@@ -118,6 +131,8 @@ export class ViewRoomComponent implements OnInit {
 									x.currentVoteTime = null;
 								});
 								this.roomInfo.forceShow = false;
+								this.roomInfo.startedTime = null;
+								this.hasAlerted = false;
 								break;
 							}
 							case 'forceShow': {
@@ -130,6 +145,11 @@ export class ViewRoomComponent implements OnInit {
 										card.finalValue = data.item.value;
 									}
 								}
+								break;
+							}
+							case 'startVotes': {
+								this.roomInfo.startedTime = moment(data.item);
+								break;
 							}
 						}
 					});
@@ -183,8 +203,8 @@ export class ViewRoomComponent implements OnInit {
 	}
 
 	shouldShowVotes() {
-		var votedCount = this.roomInfo.participants.filter(x => this.hasParticpantVoted(x)).length;
-		var userCount = this.roomInfo.participants.filter(x => x.role === 'user').length;
+		let votedCount = this.roomInfo.participants.filter(x => this.hasParticpantVoted(x)).length;
+		let userCount = this.roomInfo.participants.filter(x => x.role === 'user').length;
 		return this.isAdmin || this.roomInfo.forceShow ||
 				votedCount >= userCount;
 	}
@@ -195,6 +215,15 @@ export class ViewRoomComponent implements OnInit {
 
 	hasParticpantVoted(participant) {
 		return participant.currentVote !== null && typeof(participant.currentVote) !== 'undefined'
+	}
+
+	startVotes() {
+		this.socketService.emit('startVotes');
+	}
+
+	timeElapsed() {
+		let diff = moment().utc().diff(this.roomInfo.startedTime);
+		return moment(diff).format('mm:ss');
 	}
 
 }

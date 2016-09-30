@@ -5,16 +5,7 @@ import {Container} from "typescript-ioc";
 import {RoomServiceProvider} from "./services/factories/RoomServiceProvider";
 import {SocketService} from "./services/SocketService";
 import * as express from "express";
-import {MingleService} from "./services/MingleService";
 import * as session from "express-session";
-
-// let service = Container.get(MingleService);
-// service.getCards('members___engagement')
-// 	.then(x => {
-// 		x.forEach(y => {
-// 			console.log(y.toJSON());
-// 		});
-// 	});
 
 let RedisStore = require('connect-redis')(session);
 
@@ -38,7 +29,7 @@ Server.init({
 		let provider = Container.get(RoomServiceProvider);
 		provider.setSocket(new SocketService(io));
 
-		server.listen(process.env.PORT || 80);
+		server.listen(process.env.PORT || 3000);
 	})
 	.catch(e => {
 		console.error(e);
