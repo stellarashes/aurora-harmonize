@@ -23,6 +23,7 @@ export class Room extends DataModel {
 	cards: Card[];
 
 	currentCard: number;
+	forceShow: boolean;
 
 	@HasMany(RoomParticipant)
 	participants: RoomParticipant[];

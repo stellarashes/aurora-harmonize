@@ -91,7 +91,12 @@ export class RoomService {
 					x.currentVote = null;
 					x.currentVoteTime = null;
 				});
+				this.room.forceShow = false;
 				this.broadcastToRoom('resetVotes');
+			});
+			socket.on('forceShow', () => {
+				this.room.forceShow = true;
+				this.broadcastToRoom('forceShow');
 			});
 		});
 	}

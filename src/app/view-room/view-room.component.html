@@ -8,7 +8,13 @@ Cards for estimate
 Users
 <ul>
     <li *ngFor="let participant of roomInfo.participants">
-        {{ participant.name }} {{ participant.currentVote }}
+        {{ participant.name }}
+
+        <span class="glyphicon glyphicon-check" aria-hidden="true" *ngIf="hasParticpantVoted(participant)"></span>
+
+        <span *ngIf="shouldShowVotes()">
+            {{ participant.currentVote }}
+        </span>
     </li>
 </ul>
 
@@ -32,6 +38,7 @@ Vote
 <div class="admin-tools" *ngIf="isAdmin">
     <button (click)="updateRoom()">Refresh Cards</button>
     <button (click)="resetVotes()">Reset Votes</button>
+    <button (click)="forceShow()">Show Votes</button>
     <select [(ngModel)]="finalValue">
         <option *ngFor="let option of estimateOptions" (ngValue)="option.value">{{ option.display }}</option>
     </select>

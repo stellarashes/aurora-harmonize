@@ -13,9 +13,9 @@ import {NameService} from "../name.service";
 })
 export class ViewRoomComponent implements OnInit {
 	private roomNumber;
-	private roomInfo = {cards: [], participants: [], currentCard: null};
+	private roomInfo = {cards: [], participants: [], currentCard: null, forceShow: false};
 	private isAdmin = false;
-	private estimateOptions = [0, 1, 2, 3, 5, 8].map(x => {
+	private estimateOptions = [1, 2, 3, 5, 8].map(x => {
 		return {display: x, value: x};
 	});
 	private finalValue: number;
@@ -90,6 +90,11 @@ export class ViewRoomComponent implements OnInit {
 									x.currentVote = null;
 									x.currentVoteTime = null;
 								});
+								this.roomInfo.forceShow = false;
+								break;
+							}
+							case 'forceShow': {
+								this.roomInfo.forceShow = true;
 								break;
 							}
 						}
@@ -136,9 +141,22 @@ export class ViewRoomComponent implements OnInit {
 	finalizeVote() {
 		console.log(this.finalValue);
 		if (this.isAdmin && typeof(this.finalValue) !== 'undefined') {
-			this.roomService.finalizeValue(this.roomNumber, this.finalValue)
-				.subscribe(x => console.log(x.json()));
+			this.roomService.finalizeValue(this.roomNumber, this.finalValue);
 		}
 	}
 
+	shouldShowVotes() {
+		var votedCount = this.roomInfo.participants.filter(x => this.hasParticpantVoted(x)).length;
+		var userCount = this.roomInfo.participants.filter(x => x.role === 'user').length;
+		return this.roomInfo.forceShow ||
+				votedCount >= userCount;
+	}
+
+	forceShow() {
+		this.socketService.emit('forceShow');
+	}
+
+	hasParticpantVoted(participant) {
+		return participant.currentVote !== null && typeof(participant.currentVote) !== 'undefined'
+	}
 }
