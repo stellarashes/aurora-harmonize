@@ -20,7 +20,7 @@ export class RoomService {
 	}
 
 	updateRoom(roomNumber) {
-		return this.http.post('/api/room/' + roomNumber + '/refresh-cards', {});
+		return this.http.post(`/api/room/${roomNumber}/refresh-cards`, {});
 	}
 
 	finalizeValue(roomNumber, value) {

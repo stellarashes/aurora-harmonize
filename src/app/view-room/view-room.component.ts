@@ -139,16 +139,16 @@ export class ViewRoomComponent implements OnInit {
 	}
 
 	finalizeVote() {
-		console.log(this.finalValue);
 		if (this.isAdmin && typeof(this.finalValue) !== 'undefined') {
-			this.roomService.finalizeValue(this.roomNumber, this.finalValue);
+			this.roomService.finalizeValue(this.roomNumber, this.finalValue)
+				.subscribe(data => console.log(data));
 		}
 	}
 
 	shouldShowVotes() {
 		var votedCount = this.roomInfo.participants.filter(x => this.hasParticpantVoted(x)).length;
 		var userCount = this.roomInfo.participants.filter(x => x.role === 'user').length;
-		return this.roomInfo.forceShow ||
+		return this.isAdmin || this.roomInfo.forceShow ||
 				votedCount >= userCount;
 	}
 
