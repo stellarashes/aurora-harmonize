@@ -38,6 +38,11 @@
     padding: 0.5em;
 }
 
+.selected-option {
+    background-color: #2b38e2;
+    color: #ffffff;
+}
+
 .estimate-option-inner {
     padding: 0.5em 0;
     border: 1px solid #dddce2;

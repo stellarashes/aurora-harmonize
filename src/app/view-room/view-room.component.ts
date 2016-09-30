@@ -26,6 +26,7 @@ export class ViewRoomComponent implements OnInit {
 	private needsName = true;
 	private timeString: string;
 	private hasAlerted = false;
+	private myVote = null;
 
 	constructor(private route: ActivatedRoute,
 	            private roomService: RoomService,
@@ -141,6 +142,7 @@ export class ViewRoomComponent implements OnInit {
 								this.roomInfo.forceShow = false;
 								this.roomInfo.startedTime = null;
 								this.hasAlerted = false;
+								this.myVote = null;
 								break;
 							}
 							case 'forceShow': {
@@ -187,6 +189,7 @@ export class ViewRoomComponent implements OnInit {
 
 	vote(value) {
 		this.socketService.emit('vote', {value: value});
+		this.myVote = value;
 	}
 
 	setCard(card) {

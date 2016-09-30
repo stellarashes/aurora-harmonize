@@ -16,7 +16,7 @@
         <div class="player-estimate-container col-md-4">
             <div class="row estimate-row">
                 <div class="estimate-option col-lg-2 col-sm-3" *ngFor="let option of estimateOptions">
-                    <button class="estimation-option-button" (click)="vote(option.value)">
+                    <button class="estimation-option-button" [ngClass]="{'selected-option': option.value === myVote}" (click)="vote(option.value)">
                         <div class="estimate-option-outer">
                             <div class="estimate-option-inner">
                                 {{ option.display }}
