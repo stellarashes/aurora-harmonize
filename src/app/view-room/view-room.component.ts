@@ -17,7 +17,7 @@ declare var $: any;
 export class ViewRoomComponent implements OnInit {
 	private name;
 	private roomNumber;
-	private roomInfo = {cards: [], participants: [], currentCard: null, forceShow: false, startedTime: null};
+	private roomInfo = {cards: [], participants: [], currentCard: null, forceShow: false, startedTime: null, mingleProject: null};
 	private isAdmin = false;
 	private estimateOptions = [1, 2, 3, 5, 8].map(x => {
 		return {display: x, value: x};

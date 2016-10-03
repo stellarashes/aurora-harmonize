@@ -1,4 +1,4 @@
-import {Route, POST, GET, UPDATE, PUT} from "ts-chassis";
+import {Route, POST, GET} from "ts-chassis";
 import {Inject, Container} from "typescript-ioc";
 import {RoomServiceProvider} from "../services/factories/RoomServiceProvider";
 
