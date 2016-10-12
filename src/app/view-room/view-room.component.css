@@ -91,3 +91,19 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
+.participant-icon {
+    font-size: 1.5em;
+}
+
+.icon-clickable {
+    cursor: pointer;
+}
+
+.user-spectator {
+    color: #6d6d6d;
+}
+
+.user-admin {
+    color: #561a1c !important;
+}

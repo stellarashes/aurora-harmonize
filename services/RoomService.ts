@@ -29,12 +29,14 @@ export class RoomService {
 		return this.getCards();
 	}
 
-	public async joinRoom(user: any) {
+	public joinRoom(user: any) {
 		let participant = new RoomParticipant();
 		participant.name = user.name;
 		participant.role = user.role;
+		participant.canVote = user.canVote;
 		this.room.participants.push(participant);
-		return this.broadcastToRoom('userHasJoined', participant);
+		this.broadcastToRoom('userHasJoined', participant); // won't finish by return but that's desired behavior
+		return participant;
 	}
 
 	private async getParticipant(user: any): Promise<RoomParticipant> {
@@ -60,8 +62,8 @@ export class RoomService {
 			let connectionUser;
 			socket.join(this.namespace);
 			socket.on('join', user => {
-				connectionUser = user;
-				this.joinRoom(user);
+				connectionUser = this.joinRoom(user);
+				socket.emit('identity', connectionUser);
 			});
 			socket.on('disconnect', () => {
 				if (connectionUser) {
@@ -77,7 +79,6 @@ export class RoomService {
 						participant.currentVote = vote.value;
 						participant.currentVoteTime = new Date();
 						this.broadcastToRoom('vote', {
-							user: connectionUser,
 							participant: participant,
 						});
 					});
@@ -102,6 +103,18 @@ export class RoomService {
 			socket.on('startVotes', () => {
 				this.room.startedTime = new Date().toISOString();
 				this.broadcastToRoom('startVotes', this.room.startedTime);
+			});
+			socket.on('updateUser', user => {
+				let participant = this.room.participants.find(x => x.id === user.id);
+				if (participant) {
+					for (let key in user) {
+						if (participant.hasOwnProperty(key) && user.hasOwnProperty(key)) {
+							participant[key] = user[key];
+						}
+					}
+
+					this.broadcastToRoom('updateUser', participant);
+				}
 			});
 		});
 	}

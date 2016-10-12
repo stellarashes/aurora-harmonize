@@ -34,6 +34,7 @@ export class ViewRoomComponent implements OnInit {
 	private timeString: string;
 	private hasAlerted = false;
 	private myVote = null;
+	private self;
 
 	constructor(private route: ActivatedRoute,
 	            private roomService: RoomService,
@@ -48,6 +49,7 @@ export class ViewRoomComponent implements OnInit {
 			this.loadParams();
 		}
 
+		window.addEventListener('keyup', event => this.keyup(event));
 
 		setInterval(() => {
 			if (this.roomInfo.startedTime) {
@@ -63,6 +65,23 @@ export class ViewRoomComponent implements OnInit {
 	keydown(event) {
 		if (event.keyCode === 13)
 			this.validateName();
+	}
+
+	keyup(event) {
+		let currentTag = document.activeElement.tagName;
+		if (currentTag && currentTag.toLowerCase() === 'input') {
+			return;
+		}
+		let input = -1;
+		if (event.keyCode >= 48 && event.keyCode <= 57) {
+			input = event.keyCode - 48;
+		} else if (event.keyCode >= 96 && event.keyCode <= 105) {
+			input = event.keyCode - 96;
+		}
+
+		if (input > -1 && this.estimateOptions.find(x => x.value === input)) {
+			this.vote(input);
+		}
 	}
 
 	validateName() {
@@ -81,6 +100,13 @@ export class ViewRoomComponent implements OnInit {
 			});
 	}
 
+	toggleCanVote(participant) {
+		if (this.isAdmin) {
+			participant.canVote = !participant.canVote;
+			this.socketService.emit('updateUser', participant);
+		}
+	}
+
 	initRoom() {
 		this.roomService.getRoomInfo(this.roomNumber)
 			.subscribe(data => {
@@ -93,7 +119,8 @@ export class ViewRoomComponent implements OnInit {
 
 				this.socketService.start(this.roomNumber, {
 					name: this.nameService.get(),
-					role: this.isAdmin ? 'admin' : 'user'
+					role: this.isAdmin ? 'admin' : 'user',
+					canVote: !this.isAdmin
 				})
 					.subscribe(data => {
 						console.log(data);
@@ -123,7 +150,6 @@ export class ViewRoomComponent implements OnInit {
 								let target = this.roomInfo.participants.filter(x => x.id === data.item.participant.id);
 								if (target.length > 0) {
 									let participant = target[0];
-									this.notify(`${participant.name} has voted.`);
 									participant.currentVote = data.item.participant.currentVote;
 									participant.currentVoteTime = data.item.participant.currentVoteTime;
 
@@ -171,6 +197,17 @@ export class ViewRoomComponent implements OnInit {
 								this.roomInfo.startedTime = moment(data.item);
 								break;
 							}
+							case 'identity': {
+								this.self = data.item;
+								break;
+							}
+							case 'updateUser': {
+								let participant = this.roomInfo.participants.find(x => x.id === data.item.id);
+								if (participant) {
+									Object.assign(participant, data.item);
+								}
+								break;
+							}
 						}
 					});
 			});
@@ -199,13 +236,37 @@ export class ViewRoomComponent implements OnInit {
 			});
 	}
 
-	vote(value) {
-		if (!this.roomInfo.startedTime) {
-			this.notify('Waiting for voting to start.');
-			return;
+	canVote(notify) {
+		if (!this.self || !this.self.id) {
+			if (notify)
+				this.notify('Page was incorrectly loaded; please try refreshing.', {type: 'danger'});
+			return false;
 		}
-		this.socketService.emit('vote', {value: value});
-		this.myVote = value;
+		let participant = this.roomInfo.participants.find(x => x.id === this.self.id);
+		if (!participant) {
+			if (notify)
+				this.notify('Unable to find user in participant list; please refresh the page.', {type: 'warning'});
+			return false;
+		}
+		return participant.canVote;
+	}
+
+	vote(value) {
+		if (!this.canVote(true)) {
+			this.notify('You are currently a spectator and cannot vote.');
+		} else {
+			if (value !== this.myVote) {
+				if (!this.roomInfo.startedTime) {
+					this.notify('Waiting for voting to start.');
+					return;
+				}
+
+				this.socketService.emit('vote', {value: value});
+				this.myVote = value;
+			}
+		}
+
+
 	}
 
 	setCard(card) {
@@ -243,17 +304,16 @@ export class ViewRoomComponent implements OnInit {
 	}
 
 	shouldShowVotes() {
-		let votedCount = this.roomInfo.participants.filter(x => this.hasParticpantVoted(x)).length;
-		let userCount = this.roomInfo.participants.filter(x => x.role === 'user').length;
+		let unvotedList = this.roomInfo.participants.filter(x => x.canVote && !this.hasParticipantVoted(x));
 		return this.isAdmin || this.roomInfo.forceShow ||
-			votedCount >= userCount;
+			unvotedList.length === 0;
 	}
 
 	forceShow() {
 		this.socketService.emit('forceShow');
 	}
 
-	hasParticpantVoted(participant) {
+	hasParticipantVoted(participant) {
 		return participant.currentVote !== null && typeof(participant.currentVote) !== 'undefined'
 	}
 
