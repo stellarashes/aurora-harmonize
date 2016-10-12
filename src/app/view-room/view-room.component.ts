@@ -112,6 +112,8 @@ export class ViewRoomComponent implements OnInit {
 			.subscribe(data => {
 				let result = data.json();
 				this.roomInfo = result.room;
+				this.loadAttachmentsIfNeeded();
+
 				if (typeof (this.roomInfo.startedTime) === 'string') {
 					this.roomInfo.startedTime = moment(this.roomInfo.startedTime);
 				}
@@ -166,6 +168,7 @@ export class ViewRoomComponent implements OnInit {
 							case 'setCard': {
 								this.notify(`A new active story has been set.`);
 								this.roomInfo.currentCard = data.item;
+								this.loadAttachmentsIfNeeded();
 								break;
 							}
 							case 'resetVotes': {
@@ -226,6 +229,35 @@ export class ViewRoomComponent implements OnInit {
 		$.notify({
 			message: message
 		}, options);
+	}
+
+	loadAttachmentsIfNeeded() {
+		if (!this.roomInfo.currentCard) {
+			return;
+		}
+		let card = this.getCurrentCard();
+		if (card && card.description && card.description.match(/![\w,\s\-.]+!/)) {
+			if (!card.attachments) {
+				this.roomService.getAttachments(this.roomNumber, card.number)
+					.subscribe(data => {
+						card.attachments = data.json();
+						this.affixAttachments(card);
+					});
+			} else {
+				this.affixAttachments(card);
+			}
+		}
+	}
+
+	affixAttachments(card) {
+		for (let attachment of card.attachments) {
+			let regex = new RegExp(this.escapeRegExp(attachment.fileName), 'g');
+			card.description = card.description.replace(regex, `<img src="${attachment.url}" />`);
+		}
+	}
+
+	escapeRegExp(str) {
+		return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 	}
 
 	updateRoom() {

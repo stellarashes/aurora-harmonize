@@ -1,6 +1,7 @@
 import {Card} from "../models/Card";
 import requestPromise = require("request-promise");
 import {parseString} from "xml2js";
+import {Attachment} from "../models/Attachment";
 export class MingleService {
 	public async getCards(project: string, filters?: string[]): Promise<Card[]> {
 		let result = await this.mingleRequest({
@@ -34,6 +35,23 @@ export class MingleService {
 				"card[properties][][name]": "Estimate",
 				"card[properties][][value]": estimate,
 			},
+		});
+	}
+
+	public async getAttachments(project: string, cardNumber: number): Promise<Attachment[]> {
+		let result = await this.mingleRequest({
+			method: 'get',
+			uri: `/api/v2/projects/${project}/cards/${cardNumber}/attachments.xml`,
+		});
+		return new Promise<Attachment[]>((resolve, reject) => {
+			parseString(result, (err, parseResult) => {
+				if (err) {
+					reject(err);
+				} else {
+					let translatedAttachments = parseResult.attachments.attachment.map(x => Attachment.fromXMLObject(x));
+					resolve(translatedAttachments);
+				}
+			});
 		});
 	}
 

@@ -1,4 +1,5 @@
-import {DataModel, Table, Column} from "ts-chassis";
+import {DataModel, Table, Column, HasMany} from "ts-chassis";
+import {Attachment} from "./Attachment";
 
 @Table({
 	indexes: [
@@ -22,6 +23,9 @@ export class Card extends DataModel {
 	@Column()
 	number: number;
 
+	@HasMany(Attachment)
+	attachments: Attachment[];
+
 	name: string;
 	rank: string;
 	tags: string[];
@@ -36,8 +40,7 @@ export class Card extends DataModel {
 		card.rank = object.project_card_rank[0];
 		card.tags = object.tags;
 
-		for (let property of object.properties[0].property)
-		{
+		for (let property of object.properties[0].property) {
 			if (property.name[0] === 'Estimate') {
 				if (typeof(property.value[0]) === 'string')
 					card.finalValue = parseInt(property.value[0]);

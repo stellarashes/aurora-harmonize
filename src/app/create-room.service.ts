@@ -27,5 +27,9 @@ export class RoomService {
 		return this.http.post(`/api/room/${roomNumber}/set-final-value`, {cardNumber: cardNumber, value: value});
 	}
 
+	getAttachments(roomNumber, cardNumber) {
+		return this.http.get(`/api/room/${roomNumber}/attachments/${cardNumber}`);
+	}
+
 
 }

@@ -140,4 +140,14 @@ export class RoomService {
 			status: 'success'
 		};
 	}
+
+	public async getCardAttachments(cardNumber: number) {
+		let result = await this.mingleService.getAttachments(this.room.mingleProject, cardNumber);
+		let card = this.room.cards.find(x => x.number === cardNumber);
+		if (card) {
+			card.attachments = result;
+		}
+
+		return result;
+	}
 }

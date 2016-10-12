@@ -36,18 +36,19 @@
             </div>
             <div class="row player-row" *ngFor="let participant of roomInfo.participants"
                  [ngClass]="{'user-spectator': !participant.canVote, 'user-normal': participant.canVote, 'user-admin': participant.role === 'admin'}">
-                <span class="participant-icon col-xs-1" dropdown [ngClass]="{'icon-clickable': isAdmin}"
+                <span class="participant-icon col-xs-1" [ngClass]="{'icon-clickable': isAdmin}"
                       (click)="toggleCanVote(participant)">
                     <span class="glyphicon glyphicon-user"></span>
                 </span>
                 <span class="participant-name col-xs-8">{{ participant.name }}</span>
-                <span class="participant-checkmark col-xs-2 glyphicon glyphicon-check" aria-hidden="true"
-                      *ngIf="hasParticipantVoted(participant)">
+                <span class="participant-response col-xs-2">
+                    <span class="participant-checkmark glyphicon glyphicon-check" aria-hidden="true"
+                          *ngIf="hasParticipantVoted(participant) && !shouldShowVotes()">
+                    </span>
+                    <span class="participant-voteValue" *ngIf="shouldShowVotes()">
+                        {{ participant.currentVote }}
+                    </span>
                 </span>
-                <span class="participant-voteValue col-xs-1" *ngIf="shouldShowVotes()">
-                    {{ participant.currentVote }}
-                </span>
-
             </div>
             <div class="admin-tools row" *ngIf="isAdmin">
                 <button class="col-sm-10 btn btn-success" (click)="startVotes()">Start</button>

@@ -1,4 +1,4 @@
-import {Route, POST, GET} from "ts-chassis";
+import {Route, POST, GET, Cache} from "ts-chassis";
 import {Inject, Container} from "typescript-ioc";
 import {RoomServiceProvider} from "../services/factories/RoomServiceProvider";
 
@@ -40,16 +40,27 @@ export class RoomController {
 	@Route('/:id/refresh-cards')
 	@POST
 	public async updateRoom(id: string) {
-		let roomId = parseInt(id);
-		let roomService = await this.provider.findRoom(roomId);
+		let roomService = await this.getRoom(id);
 		return roomService.updateCards();
 	}
 
 	@Route('/:id/set-final-value')
 	@POST
 	public async setFinalValue(id: string, body: any) {
-		let roomId = parseInt(id);
-		let roomService = await this.provider.findRoom(roomId);
+		let roomService = await this.getRoom(id);
 		return roomService.setFinalValue(body.cardNumber, body.value);
+	}
+
+	private async getRoom(id: string) {
+		let roomId = parseInt(id);
+		return this.provider.findRoom(roomId);
+	}
+
+	@Route('/:id/attachments/:cardId')
+	@GET
+	@Cache(60)
+	public async getCardAttachments(id: string, cardId: string) {
+		let roomService = await this.getRoom(id);
+		return roomService.getCardAttachments(parseInt(cardId));
 	}
 }
