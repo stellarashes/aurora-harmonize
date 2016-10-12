@@ -200,6 +200,10 @@ export class ViewRoomComponent implements OnInit {
 	}
 
 	vote(value) {
+		if (!this.roomInfo.startedTime) {
+			this.notify('Waiting for voting to start.');
+			return;
+		}
 		this.socketService.emit('vote', {value: value});
 		this.myVote = value;
 	}
