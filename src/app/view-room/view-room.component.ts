@@ -17,7 +17,14 @@ declare var $: any;
 export class ViewRoomComponent implements OnInit {
 	private name;
 	private roomNumber;
-	private roomInfo = {cards: [], participants: [], currentCard: null, forceShow: false, startedTime: null, mingleProject: null};
+	private roomInfo = {
+		cards: [],
+		participants: [],
+		currentCard: null,
+		forceShow: false,
+		startedTime: null,
+		mingleProject: null
+	};
 	private isAdmin = false;
 	private estimateOptions = [1, 2, 3, 5, 8].map(x => {
 		return {display: x, value: x};
@@ -122,7 +129,9 @@ export class ViewRoomComponent implements OnInit {
 
 									if (this.isAdmin) {
 										let maxVal = 0;
-										this.roomInfo.participants.forEach(x => {if (x.currentVote && x.currentVote > maxVal) maxVal = x.currentVote});
+										this.roomInfo.participants.forEach(x => {
+											if (x.currentVote && x.currentVote > maxVal) maxVal = x.currentVote
+										});
 										this.finalValue = maxVal;
 									}
 								}
@@ -134,7 +143,6 @@ export class ViewRoomComponent implements OnInit {
 								break;
 							}
 							case 'resetVotes': {
-								this.notify(`Votes have been cleared.`);
 								this.roomInfo.participants.forEach(x => {
 									x.currentVote = null;
 									x.currentVoteTime = null;
@@ -170,10 +178,14 @@ export class ViewRoomComponent implements OnInit {
 
 	notify(message: string, options?) {
 		options = options || {};
-		options = Object.assign({}, options, {placement: {
-			from: "bottom",
-			align: "right",
-		}});
+		options = Object.assign({}, options, {
+			placement: {
+				from: "bottom",
+				align: "left",
+			},
+			delay: 3000,
+
+		});
 		$.notify({
 			message: message
 		}, options);
@@ -230,7 +242,7 @@ export class ViewRoomComponent implements OnInit {
 		let votedCount = this.roomInfo.participants.filter(x => this.hasParticpantVoted(x)).length;
 		let userCount = this.roomInfo.participants.filter(x => x.role === 'user').length;
 		return this.isAdmin || this.roomInfo.forceShow ||
-				votedCount >= userCount;
+			votedCount >= userCount;
 	}
 
 	forceShow() {
