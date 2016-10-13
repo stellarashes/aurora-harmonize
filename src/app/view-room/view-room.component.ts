@@ -251,7 +251,7 @@ export class ViewRoomComponent implements OnInit {
 
 	affixAttachments(card) {
 		for (let attachment of card.attachments) {
-			let regex = new RegExp(this.escapeRegExp(attachment.fileName), 'g');
+			let regex = new RegExp('!' + this.escapeRegExp(attachment.fileName) + '!', 'g');
 			card.description = card.description.replace(regex, `<img src="${attachment.url}" />`);
 		}
 	}
