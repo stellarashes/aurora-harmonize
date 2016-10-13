@@ -143,6 +143,7 @@ export class ViewRoomComponent implements OnInit {
 									this.roomService.getRoomInfo(this.roomNumber)
 										.subscribe(data => {
 											this.roomInfo.cards = data.json().room.cards;
+											this.loadAttachmentsIfNeeded();
 										});
 									this.notify(`Cards have been refreshed.`);
 								}
