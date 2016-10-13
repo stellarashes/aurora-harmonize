@@ -265,6 +265,7 @@ export class ViewRoomComponent implements OnInit {
 		this.roomService.updateRoom(this.roomNumber)
 			.subscribe(data => {
 				this.roomInfo.cards = data.json();
+				this.loadAttachmentsIfNeeded();
 				this.socketService.emit('updateCards');
 			});
 	}
