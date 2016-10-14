@@ -7,6 +7,7 @@ import {NameService} from "../name.service";
 import * as moment from "moment";
 
 declare var $: any;
+declare var c3: any;
 
 @Component({
 	selector: 'app-view-room',
@@ -125,7 +126,6 @@ export class ViewRoomComponent implements OnInit {
 					canVote: !this.isAdmin
 				})
 					.subscribe(data => {
-						console.log(data);
 						switch (data.action) {
 							case 'userHasJoined': {
 								if (this.roomInfo.participants.filter(x => x.name === data.item.name).length === 0)
@@ -163,6 +163,8 @@ export class ViewRoomComponent implements OnInit {
 										});
 										this.finalValue = maxVal;
 									}
+
+									this.drawDonutIfVoted();
 								}
 								break;
 							}
@@ -230,6 +232,32 @@ export class ViewRoomComponent implements OnInit {
 		$.notify({
 			message: message
 		}, options);
+	}
+
+	drawDonutIfVoted() {
+		if (this.hasFinishedVoting()) {
+			let counts = new Map<number, any[]>();
+			this.roomInfo.participants.forEach(x => {
+				if (x.canVote) {
+					if (!counts.has(x.currentVote)) {
+						counts.set(x.currentVote, [x]);
+					} else {
+						counts.get(x.currentVote).push(x);
+					}
+				}
+			});
+			var c3Options = {
+				data: {
+					columns: Array.from(counts.entries())
+						.map(x => [x[0] + ' - ' + x[1].map(x => x.name).join(', '), x[1].length]),
+					type: 'donut',
+				},
+				donut: {
+					title: 'Vote Results'
+				}
+			};
+			c3.generate(c3Options);
+		}
 	}
 
 	loadAttachmentsIfNeeded() {
@@ -338,9 +366,14 @@ export class ViewRoomComponent implements OnInit {
 	}
 
 	shouldShowVotes() {
-		let unvotedList = this.roomInfo.participants.filter(x => x.canVote && !this.hasParticipantVoted(x));
 		return this.isAdmin || this.roomInfo.forceShow ||
-			unvotedList.length === 0;
+			this.hasFinishedVoting();
+	}
+
+	hasFinishedVoting() {
+		let voterList = this.roomInfo.participants.filter(x => x.canVote);
+		let unvotedList = this.roomInfo.participants.filter(x => x.canVote && !this.hasParticipantVoted(x));
+		return voterList.length > 0 && unvotedList.length === 0;
 	}
 
 	forceShow() {

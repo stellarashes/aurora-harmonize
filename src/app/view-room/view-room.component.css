@@ -23,7 +23,7 @@
 }
 
 .player-row, .timer-container {
-    padding: 1.5em;
+    padding: 1em;
 }
 
 .player-estimate-container {
@@ -110,4 +110,12 @@
 
 .user-admin {
     color: #561a1c !important;
+}
+
+.stats-row {
+    display: none;
+}
+
+.stats-visible {
+    display: block !important;
 }
