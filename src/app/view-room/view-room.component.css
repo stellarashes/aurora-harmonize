@@ -12,6 +12,10 @@
     box-shadow: 2px 2px 2px 2px rgba(94, 94, 94, 0.75);
 }
 
+.card-title-link {
+    color: #2e4648;
+}
+
 .card-reader h4 {
     text-overflow: ellipsis;
     white-space: nowrap;
