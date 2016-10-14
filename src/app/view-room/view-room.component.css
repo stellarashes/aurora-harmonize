@@ -1,6 +1,6 @@
 .active-card-description-container {
     height: 70vh;
-    overflow: scroll;
+    overflow: auto;
     background-color: #ffffff;
     padding: 0.5em;
     box-shadow: 2px 2px 2px 2px rgba(94, 94, 94, 0.75);
@@ -118,4 +118,23 @@
 
 .stats-visible {
     display: block !important;
+}
+
+.preview-card-modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.preview-card-container {
+    position: fixed;
+    top: 10vh;
 }

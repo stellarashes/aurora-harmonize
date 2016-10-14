@@ -36,6 +36,7 @@ export class ViewRoomComponent implements OnInit {
 	private hasAlerted = false;
 	private myVote = null;
 	private self;
+	private previewCard = null;
 
 	constructor(private route: ActivatedRoute,
 	            private roomService: RoomService,
@@ -113,7 +114,7 @@ export class ViewRoomComponent implements OnInit {
 			.subscribe(data => {
 				let result = data.json();
 				this.roomInfo = result.room;
-				this.loadAttachmentsIfNeeded();
+				this.loadAttachmentsIfNeeded(this.getCurrentCard());
 
 				if (typeof (this.roomInfo.startedTime) === 'string') {
 					this.roomInfo.startedTime = moment(this.roomInfo.startedTime);
@@ -143,7 +144,7 @@ export class ViewRoomComponent implements OnInit {
 									this.roomService.getRoomInfo(this.roomNumber)
 										.subscribe(data => {
 											this.roomInfo.cards = data.json().room.cards;
-											this.loadAttachmentsIfNeeded();
+											this.loadAttachmentsIfNeeded(this.getCurrentCard());
 										});
 									this.notify(`Cards have been refreshed.`);
 								}
@@ -171,7 +172,7 @@ export class ViewRoomComponent implements OnInit {
 							case 'setCard': {
 								this.notify(`A new active story has been set.`);
 								this.roomInfo.currentCard = data.item;
-								this.loadAttachmentsIfNeeded();
+								this.loadAttachmentsIfNeeded(this.getCurrentCard());
 								break;
 							}
 							case 'resetVotes': {
@@ -260,12 +261,11 @@ export class ViewRoomComponent implements OnInit {
 		}
 	}
 
-	loadAttachmentsIfNeeded() {
-		if (!this.roomInfo.currentCard) {
+	loadAttachmentsIfNeeded(card) {
+		if (!card || !card.number) {
 			return;
 		}
-		let card = this.getCurrentCard();
-		if (card && card.description && card.description.match(/![\w,\s\-.]+!/)) {
+		if (card.description && card.description.match(/![\w,\s\-.]+!/)) {
 			if (!card.attachments) {
 				this.roomService.getAttachments(this.roomNumber, card.number)
 					.subscribe(data => {
@@ -293,7 +293,7 @@ export class ViewRoomComponent implements OnInit {
 		this.roomService.updateRoom(this.roomNumber)
 			.subscribe(data => {
 				this.roomInfo.cards = data.json();
-				this.loadAttachmentsIfNeeded();
+				this.loadAttachmentsIfNeeded(this.getCurrentCard());
 				this.socketService.emit('updateCards');
 			});
 	}
@@ -332,9 +332,14 @@ export class ViewRoomComponent implements OnInit {
 	}
 
 	setCard(card) {
-		if (this.isAdmin && card.number != this.roomInfo.currentCard) {
-			this.socketService.emit('setCard', card.number);
-			this.resetVotes();
+		if (card.number != this.roomInfo.currentCard) {
+			if (this.isAdmin) {
+				this.socketService.emit('setCard', card.number);
+				this.resetVotes();
+			} else {
+				this.previewCard = card;
+				this.loadAttachmentsIfNeeded(card);
+			}
 		}
 	}
 
@@ -391,6 +396,10 @@ export class ViewRoomComponent implements OnInit {
 	timeElapsed() {
 		let diff = moment().utc().diff(this.roomInfo.startedTime);
 		return moment(diff).format('mm:ss');
+	}
+
+	clearPreview() {
+		this.previewCard = null;
 	}
 
 }

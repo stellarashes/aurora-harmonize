@@ -4,6 +4,24 @@
         <input [(ngModel)]="name" class="form-control" (change)="updateName()" (keydown)="keydown($event)"/>
     </div>
 </div>
+<div class="preview-card-modal" *ngIf="previewCard" (click)="clearPreview()">
+
+    <div class="row">
+        <div class="preview-card-container col-md-8 col-md-offset-2">
+            <div class="card-header">
+                <h4>
+                    <a target="_blank"
+                       class="card-title-link"
+                       href="https://careerbuilder.mingle.thoughtworks.com/projects/{{roomInfo.mingleProject}}/cards/{{previewCard.number}}">
+                        #{{ previewCard.number }}: {{ previewCard.name }}
+                    </a>
+                </h4>
+            </div>
+            <div class="active-card-description-container" [innerHTML]="previewCard.description"></div>
+        </div>
+    </div>
+
+</div>
 <div class="room-container" *ngIf="!needsName">
     <div class="row">
         <div class="active-card-container col-md-8">
