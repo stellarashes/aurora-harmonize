@@ -3,6 +3,15 @@ import requestPromise = require("request-promise");
 import {parseString} from "xml2js";
 import {Attachment} from "../models/Attachment";
 export class MingleService {
+	public async getCardsByProjectAndDeliveryStatus(project: string, deliveryStatus: string): Promise<Card[]> {
+		deliveryStatus = deliveryStatus || 'Next for Estimation (Highest Priority)';
+		return this.getCards(project, [
+			'[Type][is][Story]',
+			'[Sprint][is][(Backlog)]',
+			`[Delivery Status][is][${deliveryStatus}]`,
+		]);
+	}
+
 	public async getCards(project: string, filters?: string[]): Promise<Card[]> {
 		let result = await this.mingleRequest({
 			uri: `/api/v2/projects/${project}/cards.xml`,

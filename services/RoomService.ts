@@ -53,7 +53,7 @@ export class RoomService {
 	}
 
 	private async getCards() {
-		this.room.cards = await this.mingleService.getCards(this.room.mingleProject);
+		this.room.cards = await this.mingleService.getCardsByProjectAndDeliveryStatus(this.room.mingleProject, this.room.deliveryStatus);
 		return this.room.cards;
 	}
 

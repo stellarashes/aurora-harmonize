@@ -12,6 +12,7 @@ export class RoomComponent implements OnInit {
 
   roomName: string = "room";
   mingleProject: string = 'members___engagement';
+  deliveryStatus: string;
 
   constructor(private createRoomService: RoomService, private router: Router) { }
 
@@ -19,7 +20,7 @@ export class RoomComponent implements OnInit {
   }
 
   createRoom() {
-    this.createRoomService.createRoom(this.roomName, this.mingleProject)
+    this.createRoomService.createRoom(this.roomName, this.mingleProject, this.deliveryStatus)
         .subscribe(res => this.router.navigateByUrl('/room/' + res.json().roomNumber));
   }
 

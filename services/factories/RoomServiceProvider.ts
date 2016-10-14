@@ -22,6 +22,7 @@ export class RoomServiceProvider {
 		while (!room || this.allRooms.has(room.roomNumber)) {
 			room = new Room();
 			room.mingleProject = options.project || '';
+			room.deliveryStatus = options.deliveryStatus;
 		}
 		await roomService.initialize(room, this.socket);
 		this.allRooms.set(room.roomNumber, roomService);

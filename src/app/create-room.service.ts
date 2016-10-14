@@ -8,10 +8,11 @@ export class RoomService {
 	constructor(@Inject(Http) private http: Http) {
 	}
 
-	createRoom(roomName, project) {
+	createRoom(roomName, project, deliveryStatus) {
 		return this.http.post('/api/room', {
 			roomName: roomName,
-			project: project
+			project: project,
+			deliveryStatus: deliveryStatus,
 		});
 	}
 
