@@ -188,6 +188,7 @@ export class ViewRoomComponent implements OnInit {
 							}
 							case 'forceShow': {
 								this.roomInfo.forceShow = true;
+								this.drawDonutIfVoted();
 								break;
 							}
 							case 'setFinalValue': {
@@ -247,14 +248,24 @@ export class ViewRoomComponent implements OnInit {
 					}
 				}
 			});
-			var c3Options = {
-				data: {
-					columns: Array.from(counts.entries())
-						.map(x => [x[0] + ' - ' + x[1].map(x => x.name).join(', '), x[1].length]),
-					type: 'donut',
-				},
+			let entries = Array.from(counts.entries());
+			entries.sort((x, y) => (x[0] - y[0]));
+			let data = {
+				columns: entries.map(x => [x[0] + ' - ' + x[1].map(x => x.name).join(', '), x[1].length]),
+				type: 'donut',
+			};
+			let c3Options = {
+				data: data,
 				donut: {
-					title: 'Vote Results'
+					title: 'Vote Results',
+					label: {
+						format: (value, ratio, id) => {
+							let offset = id.indexOf(' - ');
+							if (offset > -1) {
+								return id.substr(0, offset);
+							}
+						},
+					},
 				}
 			};
 			c3.generate(c3Options);
