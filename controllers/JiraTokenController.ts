@@ -22,7 +22,7 @@ export class JiraTokenController {
     @Route('/verify')
     @GET
     public async verifyToken(session: any, oauth_verifier: string) {
-        session['jiraAccessToken'] = this.service.getAccessToken(session, oauth_verifier);
+        session['jiraAccessToken'] = await this.service.getAccessToken(session, oauth_verifier);
         return new RedirectReturnType('/');
     }
 }

@@ -24,11 +24,10 @@ export class RoomController {
 	@Route('/:id')
 	@GET
 	public async getRoomInfo(id: string, session: any) {
-		var roomId = parseInt(id);
-		let roomService = await this.provider.findRoom(roomId);
+		let roomService = await this.provider.findRoom(id);
 		let roomInfo = await roomService.getRoomInfo();
 		let admin = false;
-		if (session && session.adminOfRooms && session.adminOfRooms.indexOf(roomId) !== -1) {
+		if (session && session.adminOfRooms && session.adminOfRooms.indexOf(id) !== -1) {
 			admin = true;
 		}
 		return {
@@ -52,8 +51,7 @@ export class RoomController {
 	}
 
 	private async getRoom(id: string) {
-		let roomId = parseInt(id);
-		return this.provider.findRoom(roomId);
+		return this.provider.findRoom(id);
 	}
 
 	@Route('/:id/attachments/:cardId')
